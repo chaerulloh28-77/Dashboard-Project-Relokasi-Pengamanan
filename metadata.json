@@ -1,0 +1,6 @@
+{
+  "name": "Dashboard Project Relokasi & Pengamanan",
+  "description": "Dashboard interaktif untuk monitoring progress relokasi dan pengamanan asset berdasarkan data Google Sheets, dilengkapi dengan kode Google Apps Script (code.gs dan index.html).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
