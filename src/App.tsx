@@ -46,6 +46,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PROJECTS_DATA } from "./data";
 import { ProjectData } from "./types";
 import { ProjectEditTabs, ProjectDetailTabs } from "./components/ProjectTabs";
+import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 
 export default function App() {
   // Navigation tabs
@@ -1017,6 +1018,7 @@ export default function App() {
 
     const updated = [projectToAdd, ...projects];
     saveProjects(updated, `Project baru "${projectToAdd.namaProject}" berhasil ditambahkan.`);
+    setSelectedProject(projectToAdd);
     setIsAddModalOpen(false);
     setSuccessToast("Project baru berhasil ditambahkan!");
     
@@ -1178,54 +1180,55 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col antialiased">
+    <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans flex flex-col antialiased">
       
       {/* HEADER SECTION */}
-      <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-xl" id="app-header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <header className="bg-slate-950 text-white border-b border-slate-900 sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.15)] backdrop-blur-md bg-opacity-95" id="app-header">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4.5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-500/20">
-                <LayoutDashboard className="w-7 h-7" />
+            <div className="flex items-center gap-4.5">
+              <div className="p-3 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl text-white shadow-lg shadow-indigo-500/20 relative group overflow-hidden">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <LayoutDashboard className="w-7 h-7 relative z-10" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                <h1 className="text-2xl font-black tracking-tight text-white flex flex-wrap items-center gap-2">
                   Project Monitoring & Relokasi Dashboard
-                  <span className="text-xs bg-indigo-500/30 text-indigo-300 font-semibold px-2.5 py-0.5 rounded-full border border-indigo-500/20">
+                  <span className="text-[10px] bg-indigo-500/15 text-indigo-300 font-black tracking-widest uppercase px-3 py-1 rounded-full border border-indigo-500/20">
                     Google Sheets Companion
                   </span>
                 </h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Monitoring progres fisik kontruksi, APD, survey material/labour
+                <p className="text-xs text-slate-400 mt-1 font-medium">
+                  Monitoring real-time progres fisik kontruksi, APD, survey material & labour galian regional.
                 </p>
               </div>
             </div>
 
             {/* TAB SELECTOR & SYNC STATUS */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               {/* SYNC INDICATOR BADGE */}
-              <div className="flex items-center gap-2.5 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 shadow-inner">
-                <div className="relative flex h-2 w-2">
+              <div className="flex items-center gap-2.5 bg-slate-900/80 px-3.5 py-2 rounded-2xl border border-slate-800 shadow-[inset_0_1px_4px_rgba(0,0,0,0.2)]">
+                <div className="relative flex h-2.5 w-2.5">
                   {syncStatus === "synced" && (
                     <>
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                     </>
                   )}
                   {syncStatus === "saving" && (
                     <>
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
                     </>
                   )}
                   {syncStatus === "syncing" && (
-                    <span className="relative flex h-2 w-2 items-center justify-center">
+                    <span className="relative flex h-2.5 w-2.5 items-center justify-center">
                       <RefreshCw className="animate-spin w-3.5 h-3.5 text-indigo-400" />
                     </span>
                   )}
                 </div>
                 <div className="text-left">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block leading-none">
+                  <span className="text-[9px] uppercase font-extrabold tracking-widest text-slate-500 block leading-none">
                     Cloud Sync
                   </span>
                   <span className="text-xs font-bold text-slate-100 block mt-0.5 leading-none">
@@ -1236,25 +1239,25 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+              <div className="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 shadow-inner">
                 <button
                   onClick={() => setActiveTab("dashboard")}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`px-4.5 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                     activeTab === "dashboard"
-                      ? "bg-indigo-600 text-white shadow-md"
-                      : "text-slate-300 hover:text-white"
+                      ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/10 scale-[1.02]"
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                   id="tab-btn-dashboard"
                 >
                   <LayoutDashboard className="w-4 h-4" />
-                  Live Demo Dashboard
+                  Dashboard Monitoring
                 </button>
                 <button
                   onClick={() => setActiveTab("analytics")}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`px-4.5 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                     activeTab === "analytics"
-                      ? "bg-indigo-600 text-white shadow-md"
-                      : "text-slate-300 hover:text-white"
+                      ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/10 scale-[1.02]"
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                   id="tab-btn-analytics"
                 >
@@ -1270,7 +1273,7 @@ export default function App() {
       {/* BODY SECTION */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-8">
         
-        {/* TAB 1: LIVE DEMO DASHBOARD */}
+        {/* TAB 1: DASHBOARD MONITORING */}
         {activeTab === "dashboard" && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 transition-all duration-300" id="dashboard-tab">
             
@@ -1537,43 +1540,98 @@ export default function App() {
             {/* RIGHT COLUMN: MAIN CONTENT */}
             <div className="lg:col-span-3 flex flex-col gap-8" id="dashboard-main-content">
               
+              {/* PERSONAL GREETING BANNER */}
+              <div className="bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 border border-indigo-800/40 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6" id="welcome-greeting-banner">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-10 left-10 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+                
+                <div className="relative z-10 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-indigo-500/20 text-indigo-300 text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-md border border-indigo-500/30">
+                      ADMIN PORTAL
+                    </span>
+                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Server Online
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-slate-300 max-w-lg font-medium leading-relaxed">
+                    Sistem memantau seluruh relokasi galian, perizinan pemda, & pengamanan aset.
+                  </p>
+                  
+                  <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-1">
+                    <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>{new Date().toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</span>
+                  </div>
+                </div>
+
+                <div className="relative z-10 flex flex-wrap gap-4 items-center self-stretch justify-between md:justify-end md:min-w-[280px]">
+                  <div className="bg-slate-800/60 backdrop-blur-md px-4 py-3 rounded-2xl border border-slate-700/50 text-left shrink-0 flex-1 sm:flex-initial">
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Rerata Progres Fisik</p>
+                    <p className="text-xl font-extrabold text-indigo-400 font-mono mt-0.5">
+                      {Math.round(projects.reduce((acc, p) => acc + (p.progressConstruction || 0), 0) / (projects.length || 1))}%
+                    </p>
+                    <div className="w-20 bg-slate-700 h-1 rounded-full mt-1.5 overflow-hidden">
+                      <div 
+                        className="bg-indigo-500 h-full rounded-full" 
+                        style={{ width: `${projects.reduce((acc, p) => acc + (p.progressConstruction || 0), 0) / (projects.length || 1)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-800/60 backdrop-blur-md px-4 py-3 rounded-2xl border border-slate-700/50 text-left shrink-0 flex-1 sm:flex-initial">
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Dokumen Ter-Audit</p>
+                    <p className="text-xl font-extrabold text-emerald-400 font-mono mt-0.5">
+                      {Math.round((projects.filter(p => p.statusAudit === "Sudah Audit").length / (projects.length || 1)) * 100)}%
+                    </p>
+                    <div className="w-20 bg-slate-700 h-1 rounded-full mt-1.5 overflow-hidden">
+                      <div 
+                        className="bg-emerald-500 h-full rounded-full" 
+                        style={{ width: `${(projects.filter(p => p.statusAudit === "Sudah Audit").length / (projects.length || 1)) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* STATS OVERVIEW PANELS */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" id="stats-cards-grid">
               
               {/* Card 1: Total projects */}
-              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-indigo-200 transition-colors" id="stat-card-total">
-                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-indigo-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group" id="stat-card-total">
+                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                   <Layers className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Total Project</p>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">{analytics.total}</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1 font-mono tracking-tight">{analytics.total}</h3>
                   <p className="text-[10px] text-slate-500 mt-0.5">Ditemukan di database</p>
                 </div>
               </div>
 
               {/* Card 2: Done projects */}
-              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-emerald-200 transition-colors" id="stat-card-done">
-                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-emerald-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group" id="stat-card-done">
+                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Project Selesai</p>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">
+                  <h3 className="text-2xl font-black text-slate-900 mt-1 font-mono tracking-tight">
                     {filteredProjects.filter(p => p.statusConstruction === "Project Done" || p.progressConstruction === 100).length}
                   </h3>
-                  <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">Progress 100%</p>
+                  <p className="text-[10px] text-emerald-600 font-bold mt-0.5">Progress 100%</p>
                 </div>
               </div>
 
               {/* Card 3: In Progress */}
-              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-blue-200 transition-colors" id="stat-card-progress">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-blue-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group" id="stat-card-progress">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">In Progress</p>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">
+                  <h3 className="text-2xl font-black text-slate-900 mt-1 font-mono tracking-tight">
                     {filteredProjects.filter(p => p.statusConstruction === "In Progress").length}
                   </h3>
                   <p className="text-[10px] text-slate-500 mt-0.5">Sedang konstruksi</p>
@@ -1581,13 +1639,13 @@ export default function App() {
               </div>
 
               {/* Card 4: Total Length */}
-              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-rose-200 transition-colors" id="stat-card-length">
-                <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4 hover:border-rose-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group" id="stat-card-length">
+                <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                   <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Total Panjang</p>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">
+                  <h3 className="text-2xl font-black text-slate-900 mt-1 font-mono tracking-tight">
                     {analytics.totalLength.toLocaleString("id-ID")} m
                   </h3>
                   <p className="text-[10px] text-slate-500 mt-0.5">Rentang kabel & pipa</p>
@@ -1957,9 +2015,10 @@ export default function App() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     {tableViewMode === "compact" ? (
-                      <tr className="bg-slate-100/50 border-b border-slate-200 text-slate-400 text-[10px] font-extrabold uppercase tracking-wider whitespace-nowrap">
-                        <th className="py-3 px-5 text-center w-12">No</th>
-                        <th className="py-3 px-5">Nama Project / PMO ID</th>
+                      <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+                        <th className="py-3 px-4 text-center w-12 sticky left-0 bg-slate-100 z-30 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200">No</th>
+                        <th className="py-3 px-5 sticky left-[48px] bg-slate-100 z-30 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200 min-w-[200px]">Nama Project</th>
+                        <th className="py-3 px-4 text-center w-28 sticky left-[248px] bg-indigo-50/90 text-indigo-700 z-30 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200">Aksi Cepat</th>
                         <th className="py-3 px-5">Jabo</th>
                         <th className="py-3 px-5">PIC / Waspang</th>
                         <th className="py-3 px-5">Vendor Utama</th>
@@ -1968,117 +2027,195 @@ export default function App() {
                         <th className="py-3 px-5 text-center">Status</th>
                       </tr>
                     ) : (
-                      <tr className="bg-slate-100/50 border-b border-slate-200 text-slate-400 text-[10px] font-extrabold uppercase tracking-wider whitespace-nowrap">
-                        <th className="py-3 px-5 text-center w-12 sticky left-0 bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200">No</th>
-                        <th className="py-3 px-5 sticky left-[48px] bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200 min-w-[200px]">Nama Project</th>
-                        <th className="py-3 px-5 min-w-[120px]">PMO ID</th>
-                        <th className="py-3 px-5">Tanggal Surat</th>
-                        <th className="py-3 px-5">Tahun</th>
-                        <th className="py-3 px-5">Bulan</th>
-                        <th className="py-3 px-5">Length (M)</th>
-                        <th className="py-3 px-5">APD Relokasi</th>
-                        <th className="py-3 px-5">Status Audit</th>
-                        <th className="py-3 px-5">APD Linknet</th>
-                        <th className="py-3 px-5">Survey</th>
-                        <th className="py-3 px-5">BA Survey</th>
-                        <th className="py-3 px-5">Status Survey Material</th>
-                        <th className="py-3 px-5">Status Survey Labour</th>
-                        <th className="py-3 px-5">CE Material</th>
-                        <th className="py-3 px-5">SPH/BOQ Vendor</th>
-                        <th className="py-3 px-5">APD LN</th>
-                        <th className="py-3 px-5">Timeline</th>
-                        <th className="py-3 px-5">Status CE</th>
-                        <th className="py-3 px-5">Status MR</th>
-                        <th className="py-3 px-5">Clover</th>
-                        <th className="py-3 px-5">No MR</th>
-                        <th className="py-3 px-5">No GIN</th>
-                        <th className="py-3 px-5">Status Material</th>
-                        <th className="py-3 px-5">Remarks</th>
-                        <th className="py-3 px-5">Stock</th>
-                        <th className="py-3 px-5">Project ID</th>
-                        <th className="py-3 px-5">MATERIAL</th>
-                        <th className="py-3 px-5">Quantity</th>
-                        <th className="py-3 px-5">Priority</th>
-                        <th className="py-3 px-5">Adjusment</th>
-                        <th className="py-3 px-5">FO 288</th>
-                        <th className="py-3 px-5">FO 288GL</th>
-                        <th className="py-3 px-5">FO 144</th>
-                        <th className="py-3 px-5">FO 96</th>
-                        <th className="py-3 px-5">FO 96GL</th>
-                        <th className="py-3 px-5">FO 48</th>
-                        <th className="py-3 px-5">FO 24</th>
-                        <th className="py-3 px-5">FO 12</th>
-                        <th className="py-3 px-5">Coax</th>
-                        <th className="py-3 px-5">Galvanis 2"</th>
-                        <th className="py-3 px-5">Closure 288</th>
-                        <th className="py-3 px-5">Closure 144</th>
-                        <th className="py-3 px-5">Closure 96</th>
-                        <th className="py-3 px-5">Closure 48</th>
-                        <th className="py-3 px-5">Closure 24</th>
-                        <th className="py-3 px-5">Closure 12</th>
-                        <th className="py-3 px-5">Tgl Start Project</th>
-                        <th className="py-3 px-5">Status Permit</th>
-                        <th className="py-3 px-5">Galian Alur (Cons)</th>
-                        <th className="py-3 px-5">Galian Akses (Cons)</th>
-                        <th className="py-3 px-5">Galian Crossing Jalan (Cons)</th>
-                        <th className="py-3 px-5">Galian Crossing Jembatan (Cons)</th>
-                        <th className="py-3 px-5">Galian Crossing Sungai (Cons)</th>
-                        <th className="py-3 px-5">Instalasi HH/MH (Cons)</th>
-                        <th className="py-3 px-5">Install Galvanis (Cons)</th>
-                        <th className="py-3 px-5">Install Pole (Cons)</th>
-                        <th className="py-3 px-5">FO 288 (Cons)</th>
-                        <th className="py-3 px-5">FO 144 (Cons)</th>
-                        <th className="py-3 px-5">FO 96 (Cons)</th>
-                        <th className="py-3 px-5">FO 96GL (Cons)</th>
-                        <th className="py-3 px-5">FO 48 (Cons)</th>
-                        <th className="py-3 px-5">FO 12 (Cons)</th>
-                        <th className="py-3 px-5">Coax (Cons)</th>
-                        <th className="py-3 px-5">FO 288 (Pull)</th>
-                        <th className="py-3 px-5">FO 144 (Pull)</th>
-                        <th className="py-3 px-5">FO 96 (Pull)</th>
-                        <th className="py-3 px-5">FO 96GL (Pull)</th>
-                        <th className="py-3 px-5">FO 48 (Pull)</th>
-                        <th className="py-3 px-5">FO 12 (Pull)</th>
-                        <th className="py-3 px-5">Coax (Pull)</th>
-                        <th className="py-3 px-5">Status Construction</th>
-                        <th className="py-3 px-5">Category Construction</th>
-                        <th className="py-3 px-5">Construction Progress</th>
-                        <th className="py-3 px-5">Construction (%)</th>
-                        <th className="py-3 px-5">Tgl Dateline</th>
-                        <th className="py-3 px-5">Plan CO Bulan</th>
-                        <th className="py-3 px-5">Today</th>
-                        <th className="py-3 px-5">Aging</th>
-                        <th className="py-3 px-5">FO 288 (Rco)</th>
-                        <th className="py-3 px-5">FO 144 (Rco)</th>
-                        <th className="py-3 px-5">FO 96 (Rco)</th>
-                        <th className="py-3 px-5">FO 96GL (Rco)</th>
-                        <th className="py-3 px-5">FO 48 (Rco)</th>
-                        <th className="py-3 px-5">FO 24 (Rco)</th>
-                        <th className="py-3 px-5">FO 12 (Rco)</th>
-                        <th className="py-3 px-5">Coax (Rco)</th>
-                        <th className="py-3 px-5">FO 288 (SCo)</th>
-                        <th className="py-3 px-5">FO 144 (SCo)</th>
-                        <th className="py-3 px-5">FO 96 (SCo)</th>
-                        <th className="py-3 px-5">FO 96GL (SCo)</th>
-                        <th className="py-3 px-5">FO 48 (SCo)</th>
-                        <th className="py-3 px-5">FO 12 (SCo)</th>
-                        <th className="py-3 px-5">Coax (SCo)</th>
-                        <th className="py-3 px-5">Status CO FO</th>
-                        <th className="py-3 px-5">Status CO Coax</th>
-                      </tr>
+                      <>
+                        {/* ROW 1: Group Headers */}
+                        <tr className="bg-slate-200 border-b border-slate-300 text-slate-800 text-[10px] font-black uppercase tracking-wider text-center select-none whitespace-nowrap">
+                          <th rowSpan={2} className="py-2.5 px-4 sticky left-0 bg-slate-200 z-30 border-r border-slate-300 shadow-[2px_0_5px_rgba(0,0,0,0.05)] text-center w-12">
+                            No
+                          </th>
+                          <th rowSpan={2} className="py-2.5 px-5 sticky left-[48px] bg-slate-200 z-30 border-r border-slate-300 shadow-[2px_0_5px_rgba(0,0,0,0.05)] min-w-[200px] text-left">
+                            Nama Project
+                          </th>
+                          <th rowSpan={2} className="py-2.5 px-4 sticky left-[248px] bg-indigo-100 text-indigo-900 z-30 border-r border-slate-300 shadow-[2px_0_5px_rgba(0,0,0,0.05)] w-28">
+                            Aksi Cepat
+                          </th>
+                          <th colSpan={5} className="py-1.5 px-2 bg-slate-100/90 border-r border-slate-300 text-slate-600 font-black text-center">
+                            Informasi Umum
+                          </th>
+                          <th colSpan={7} className="py-1.5 px-2 bg-amber-100 border-r border-slate-300 text-amber-800 font-black text-center">
+                            Survey & Perijinan
+                          </th>
+                          <th colSpan={11} className="py-1.5 px-2 bg-orange-100 border-r border-slate-300 text-orange-800 font-black text-center">
+                            Material & Vendor
+                          </th>
+                          <th colSpan={6} className="py-1.5 px-2 bg-rose-100 border-r border-slate-300 text-rose-800 font-black text-center">
+                            Detail & Kebutuhan
+                          </th>
+                          <th colSpan={10} className="py-1.5 px-2 bg-sky-100 border-r border-slate-300 text-sky-800 font-black text-center">
+                            Kabel & Galvanis (Plan)
+                          </th>
+                          <th colSpan={6} className="py-1.5 px-2 bg-slate-100 border-r border-slate-300 text-slate-600 font-black text-center">
+                            Closure (Plan)
+                          </th>
+                          <th colSpan={10} className="py-1.5 px-2 bg-emerald-100 border-r border-slate-300 text-emerald-800 font-black text-center">
+                            Sipil / Konstruksi (Progress)
+                          </th>
+                          <th colSpan={7} className="py-1.5 px-2 bg-teal-100 border-r border-slate-300 text-teal-800 font-black text-center">
+                            FO Installed (Cons)
+                          </th>
+                          <th colSpan={7} className="py-1.5 px-2 bg-violet-100 border-r border-slate-300 text-violet-800 font-black text-center">
+                            Pulling Progress
+                          </th>
+                          <th colSpan={8} className="py-1.5 px-2 bg-slate-800 border-r border-slate-700 text-slate-100 font-black text-center">
+                            Status & Progress Akhir
+                          </th>
+                          <th colSpan={8} className="py-1.5 px-2 bg-yellow-100 border-r border-slate-300 text-yellow-800 font-black text-center">
+                            RCO Progress
+                          </th>
+                          <th colSpan={7} className="py-1.5 px-2 bg-purple-100 border-r border-slate-300 text-purple-800 font-black text-center">
+                            SCO Progress
+                          </th>
+                          <th colSpan={2} className="py-1.5 px-2 bg-zinc-100 text-zinc-800 font-black text-center">
+                            Status CO
+                          </th>
+                        </tr>
+
+                        {/* ROW 2: Sub-headers */}
+                        <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap text-left select-none">
+                          {/* Subheaders for Informasi Umum */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 min-w-[100px]">PMO ID</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60">Tanggal Surat</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60">Tahun</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60">Bulan</th>
+                          <th className="py-2 px-3 border-r border-slate-300">Length (M)</th>
+
+                          {/* Subheaders for Survey & Perijinan */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">APD Relokasi</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">Status Audit</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">APD Linknet</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">Survey</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">BA Survey</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-amber-50/30">Status Survey Mat</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-amber-50/30">Status Survey Lab</th>
+
+                          {/* Subheaders for Material & Vendor */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">CE Material</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">SPH/BOQ Vendor</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">APD LN</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">Timeline</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">Status CE</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">Status MR</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">Clover</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">No MR</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">No GIN</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-orange-50/30">Status Material</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-orange-50/30">Remarks</th>
+
+                          {/* Subheaders for Detail & Kebutuhan */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-rose-50/30">Stock</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-rose-50/30">Project ID</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-rose-50/30">MATERIAL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-rose-50/30">Quantity</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-rose-50/30">Priority</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-rose-50/30">Adjustment</th>
+
+                          {/* Subheaders for Kabel (Plan) */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 288GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 96GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 24</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">FO 12</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-sky-50/30 text-center">Coax</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-sky-50/30 text-center">Galvanis 2"</th>
+
+                          {/* Subheaders for Closure (Plan) */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 text-center">Closure 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 text-center">Closure 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 text-center">Closure 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 text-center">Closure 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 text-center">Closure 24</th>
+                          <th className="py-2 px-3 border-r border-slate-300 text-center">Closure 12</th>
+
+                          {/* Subheaders for Sipil / Konstruksi */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Tgl Start</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Permit Status</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Galian Alur</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Galian Akses</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Crossing Jalan</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Crossing Jemb</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Crossing Sungai</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Instalasi HH/MH</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-emerald-50/30">Install Galvanis</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-emerald-50/30">Install Pole</th>
+
+                          {/* Subheaders for FO Installed (Cons) */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 96GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-teal-50/30 text-center">FO 12</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-teal-50/30 text-center">Coax</th>
+
+                          {/* Subheaders for Pulling Progress */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 96GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-violet-50/30 text-center">FO 12</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-violet-50/30 text-center">Coax</th>
+
+                          {/* Subheaders for Status & Progress Akhir */}
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Status</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Category</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Progress (Tks)</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Progress (%)</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Tgl Dateline</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Plan CO Bulan</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Today</th>
+                          <th className="py-2 px-3 border-r border-slate-700 bg-slate-800 text-slate-100 font-bold">Aging</th>
+
+                          {/* Subheaders for RCO Progress */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 96GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 24</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-yellow-50/30 text-center">FO 12</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-yellow-50/30 text-center">Coax</th>
+
+                          {/* Subheaders for SCO Progress */}
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 288</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 144</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 96</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 96GL</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 48</th>
+                          <th className="py-2 px-3 border-r border-slate-200/60 bg-purple-50/30 text-center">FO 12</th>
+                          <th className="py-2 px-3 border-r border-slate-300 bg-purple-50/30 text-center">Coax</th>
+
+                          {/* Subheaders for CO Statuses */}
+                          <th className="py-2 px-3 border-r border-slate-200/60">Status CO FO</th>
+                          <th className="py-2 px-3">Status CO Coax</th>
+                        </tr>
+                      </>
                     )}
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-sm font-medium">
+                  <tbody className="divide-y divide-slate-150 text-sm font-medium">
                     {paginatedProjects.map((p) => {
                       let statusBadge = "bg-slate-100 text-slate-600 border border-slate-200/60";
                       if (p.statusConstruction?.includes("Done") || p.statusConstruction?.includes("complete") || p.statusConstruction?.includes("Selesai") || p.statusConstruction?.includes("Selesai Utuh")) {
-                        statusBadge = "bg-emerald-50 text-emerald-700 border border-emerald-200";
+                        statusBadge = "bg-emerald-50 text-emerald-700 border-emerald-300";
                       } else if (p.statusConstruction?.includes("Progress") || p.statusConstruction?.includes("Jalan")) {
-                        statusBadge = "bg-blue-50 text-blue-700 border border-blue-200";
+                        statusBadge = "bg-blue-50 text-blue-700 border-blue-300";
                       } else if (p.statusConstruction?.includes("Pending") || p.statusConstruction?.includes("Hold")) {
-                        statusBadge = "bg-amber-50 text-amber-700 border border-amber-200";
+                        statusBadge = "bg-amber-50 text-amber-700 border-amber-300";
                       } else if (p.statusConstruction?.includes("Cancel") || p.statusConstruction?.includes("Batal")) {
-                        statusBadge = "bg-rose-50 text-rose-700 border border-rose-200";
+                        statusBadge = "bg-rose-50 text-rose-700 border-rose-300";
                       }
 
                       if (tableViewMode === "compact") {
@@ -2086,47 +2223,128 @@ export default function App() {
                           <tr 
                             key={`${p.pmoId}-${p.no}`} 
                             onClick={() => setSelectedProject(p)}
-                            className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
+                            className="hover:bg-slate-50/80 cursor-pointer transition-colors group border-b border-slate-150/60"
                           >
-                            <td className="py-4 px-5 text-center font-bold text-slate-400 group-hover:text-indigo-600">
+                            {/* Pinned columns */}
+                            <td className="py-3 px-4 text-center font-bold text-slate-400 group-hover:text-indigo-600 sticky left-0 bg-white group-hover:bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.03)] border-r border-slate-200 flex-shrink-0">
                               {p.no}
                             </td>
-                            <td className="py-4 px-5">
-                              <p className="font-bold text-slate-800 text-[13.5px] leading-tight group-hover:text-indigo-600 transition-colors">
+                            <td className="py-3 px-5 sticky left-[48px] bg-white group-hover:bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.03)] border-r border-slate-200 min-w-[200px]" title={p.namaProject}>
+                              <p className="font-bold text-slate-800 text-[13px] leading-tight group-hover:text-indigo-600 transition-colors">
                                 {p.namaProject}
                               </p>
                               <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase block mt-1">
                                 {p.pmoId || "TANPA PMO ID"} {p.projectId ? `• SAP: ${p.projectId}` : ""}
                               </span>
                             </td>
-                            <td className="py-4 px-5 text-xs text-slate-600 font-bold">
+                            
+                            {/* Pinned action column */}
+                            <td className="py-3 px-4 text-center sticky left-[248px] bg-indigo-50/40 group-hover:bg-indigo-50/80 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.04)] border-r border-slate-200 w-28">
+                              <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditForm(p);
+                                    setIsEditing(true);
+                                    setDetailModalTab("general");
+                                    setSelectedProject(p);
+                                  }}
+                                  className="p-1.5 text-amber-600 hover:text-white hover:bg-amber-500 rounded-lg border border-amber-200 hover:border-amber-500 transition-all cursor-pointer shadow-xs bg-white"
+                                  title="Ubah Data Project"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedProject(p);
+                                    setShowDeleteConfirm(true);
+                                  }}
+                                  className="p-1.5 text-rose-600 hover:text-white hover:bg-rose-500 rounded-lg border border-rose-200 hover:border-rose-500 transition-all cursor-pointer shadow-xs bg-white"
+                                  title="Hapus Project"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+
+                            {/* Regular scrollable columns */}
+                            <td className="py-3 px-5 text-xs text-slate-600 font-bold">
                               {p.jabo}
                             </td>
-                            <td className="py-4 px-5 text-xs text-slate-600">
+                            <td className="py-3 px-5 text-xs text-slate-600">
                               <div className="font-bold text-slate-700">{p.pic}</div>
                               <span className="text-[10px] text-slate-400">{p.waspang || "Tidak ada Waspang"}</span>
                             </td>
-                            <td className="py-4 px-5 text-xs text-slate-600 truncate max-w-[140px]">
+                            <td className="py-3 px-5 text-xs text-slate-600 truncate max-w-[140px]">
                               {p.vendor || "Belum Ditentukan"}
                             </td>
-                            <td className="py-4 px-5 text-xs font-mono font-bold text-slate-700">
+                            <td className="py-3 px-5 text-xs font-mono font-bold text-slate-700">
                               {p.lengthM > 0 ? `${p.lengthM.toLocaleString("id-ID")} m` : "-"}
                             </td>
-                            <td className="py-4 px-5">
+                            
+                            {/* Interactive progress column */}
+                            <td className="py-3 px-5" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center gap-2">
-                                <div className="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={p.progressConstruction || 0}
+                                  onChange={(e) => {
+                                    const newVal = Math.min(100, Math.max(0, Number(e.target.value) || 0));
+                                    const updated = projects.map(proj => {
+                                      if (proj.no === p.no) {
+                                        return {
+                                          ...proj,
+                                          progressConstruction: newVal,
+                                          statusConstruction: newVal === 100 ? "Project Done" : proj.statusConstruction === "Project Done" ? "In Progress" : proj.statusConstruction,
+                                          dateUpdate: new Date().toISOString().split("T")[0]
+                                        };
+                                      }
+                                      return proj;
+                                    });
+                                    saveProjects(updated, `Progress project "${p.namaProject}" diubah menjadi ${newVal}%`);
+                                  }}
+                                  className="w-14 px-1.5 py-1 text-xs font-bold font-mono text-slate-800 bg-slate-50 border border-slate-200 rounded-lg text-center focus:ring-1 focus:ring-indigo-500 focus:bg-white outline-none"
+                                />
+                                <div className="w-12 bg-slate-100 rounded-full h-1.5 overflow-hidden hidden sm:block">
                                   <div 
                                     className="bg-indigo-600 h-full rounded-full transition-all duration-500" 
                                     style={{ width: `${p.progressConstruction}%` }}
                                   />
                                 </div>
-                                <span className="text-xs font-black text-slate-600">{p.progressConstruction}%</span>
                               </div>
                             </td>
-                            <td className="py-4 px-5 text-center">
-                              <span className={`px-2.5 py-1 text-[10px] font-extrabold rounded-full ${statusBadge}`}>
-                                {p.statusConstruction}
-                              </span>
+
+                            {/* Interactive status column */}
+                            <td className="py-3 px-5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <select
+                                value={p.statusConstruction || ""}
+                                onChange={(e) => {
+                                  const newVal = e.target.value;
+                                  const updated = projects.map(proj => {
+                                    if (proj.no === p.no) {
+                                      return {
+                                        ...proj,
+                                        statusConstruction: newVal,
+                                        progressConstruction: newVal === "Project Done" ? 100 : proj.progressConstruction === 100 ? 90 : proj.progressConstruction,
+                                        dateUpdate: new Date().toISOString().split("T")[0]
+                                      };
+                                    }
+                                    return proj;
+                                  });
+                                  saveProjects(updated, `Status project "${p.namaProject}" diubah menjadi "${newVal}"`);
+                                }}
+                                className={`px-2 py-1 text-[11px] font-black rounded-lg border outline-none cursor-pointer transition-all ${statusBadge}`}
+                              >
+                                <option value="Not Started" className="bg-white text-slate-800 font-bold">Not Started</option>
+                                <option value="In Progress" className="bg-white text-blue-800 font-bold">In Progress</option>
+                                <option value="Pending" className="bg-white text-amber-800 font-bold">Pending</option>
+                                <option value="Hold" className="bg-white text-amber-800 font-bold">Hold</option>
+                                <option value="Project Done" className="bg-white text-emerald-800 font-bold">Project Done</option>
+                                <option value="Cancel" className="bg-white text-rose-800 font-bold">Cancel</option>
+                              </select>
                             </td>
                           </tr>
                         );
@@ -2136,51 +2354,79 @@ export default function App() {
                           <tr 
                             key={`${p.pmoId}-${p.no}`} 
                             onClick={() => setSelectedProject(p)}
-                            className="hover:bg-slate-50/80 cursor-pointer transition-colors group text-xs text-slate-700 whitespace-nowrap"
+                            className="hover:bg-slate-50/80 cursor-pointer transition-colors group text-xs text-slate-700 whitespace-nowrap border-b border-slate-150/60"
                           >
                             {/* Pinned columns */}
-                            <td className="py-3 px-5 text-center font-bold text-slate-400 group-hover:text-indigo-600 sticky left-0 bg-white group-hover:bg-slate-50 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-100">
+                            <td className="py-3 px-4 text-center font-bold text-slate-400 group-hover:text-indigo-600 sticky left-0 bg-white group-hover:bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.03)] border-r border-slate-200">
                               {p.no}
                             </td>
-                            <td className="py-3 px-5 font-bold text-slate-800 text-[13px] leading-tight group-hover:text-indigo-600 transition-colors sticky left-[48px] bg-white group-hover:bg-slate-50 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-100 max-w-[220px] truncate" title={p.namaProject}>
+                            <td className="py-3 px-5 font-bold text-slate-800 text-[13px] leading-tight group-hover:text-indigo-600 transition-colors sticky left-[48px] bg-white group-hover:bg-slate-50 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.03)] border-r border-slate-200 max-w-[220px] truncate" title={p.namaProject}>
                               {p.namaProject}
                             </td>
                             
-                            {/* Scrollable Columns in Exact Requested Order */}
-                            <td className="py-3 px-5 font-mono text-[11px] text-slate-500 font-bold">{p.pmoId || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.tanggalSurat || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.tahun || "-"}</td>
-                            <td className="py-3 px-5">{p.bulan || "-"}</td>
-                            <td className="py-3 px-5 font-mono font-bold text-slate-800">
-                              {p.lengthM !== undefined ? `${p.lengthM.toLocaleString("id-ID")} M` : "-"}
+                            {/* Pinned action column */}
+                            <td className="py-3 px-4 text-center sticky left-[248px] bg-indigo-50/40 group-hover:bg-indigo-50/80 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.04)] border-r border-slate-200 w-28">
+                              <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditForm(p);
+                                    setIsEditing(true);
+                                    setDetailModalTab("general");
+                                    setSelectedProject(p);
+                                  }}
+                                  className="p-1.5 text-amber-600 hover:text-white hover:bg-amber-500 rounded-lg border border-amber-200 hover:border-amber-500 transition-all cursor-pointer shadow-xs bg-white"
+                                  title="Ubah Data Project"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedProject(p);
+                                    setShowDeleteConfirm(true);
+                                  }}
+                                  className="p-1.5 text-rose-600 hover:text-white hover:bg-rose-500 rounded-lg border border-rose-200 hover:border-rose-500 transition-all cursor-pointer shadow-xs bg-white"
+                                  title="Hapus Project"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </td>
                             
-                            <td className="py-3 px-5">
+                            {/* Scrollable Columns in Exact Requested Order */}
+                            <td className="py-3 px-5 font-mono text-[11px] text-slate-500 font-bold border-r border-slate-100">{p.pmoId || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100">{p.tanggalSurat || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100">{p.tahun || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100">{p.bulan || "-"}</td>
+                            <td className="py-3 px-5 font-mono font-bold text-slate-800 border-r border-slate-200">{p.lengthM !== undefined ? `${p.lengthM.toLocaleString("id-ID")} M` : "-"}</td>
+                            
+                            <td className="py-3 px-5 border-r border-slate-100">
                               {p.apdRelokasi ? (
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${p.apdRelokasi.toLowerCase().includes("need") ? "text-rose-700 bg-rose-50 border-rose-100 animate-pulse" : "text-slate-600 bg-slate-50 border-slate-200"}`}>
                                   {p.apdRelokasi}
                                 </span>
                               ) : "-"}
                             </td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 border-r border-slate-100">
                               {p.statusAudit ? (
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${p.statusAudit.toLowerCase().includes("sudah") || p.statusAudit.toLowerCase().includes("selesai") || p.statusAudit.toLowerCase().includes("done") ? "text-emerald-700 bg-emerald-50 border-emerald-150" : "text-amber-700 bg-amber-50 border-amber-150"}`}>
                                   {p.statusAudit}
                                 </span>
                               ) : "-"}
                             </td>
-                            <td className="py-3 px-5">{p.apdLinknet || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100">{p.apdLinknet || "-"}</td>
                             
-                            <td className="py-3 px-5">{p.survey || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.baSurvey || "-"}</td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 border-r border-slate-100">{p.survey || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100">{p.baSurvey || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100">
                               {p.statusSurveyMaterial ? (
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${p.statusSurveyMaterial.toLowerCase().includes("sudah") || p.statusSurveyMaterial.toLowerCase().includes("yes") || p.statusSurveyMaterial.toLowerCase().includes("done") ? "text-emerald-700 bg-emerald-50 border-emerald-150" : "text-amber-700 bg-amber-50 border-amber-150"}`}>
                                   {p.statusSurveyMaterial}
                                 </span>
                               ) : "-"}
                             </td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 border-r border-slate-200">
                               {p.statusSurveyLabour ? (
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${p.statusSurveyLabour.toLowerCase().includes("sudah") || p.statusSurveyLabour.toLowerCase().includes("yes") || p.statusSurveyLabour.toLowerCase().includes("done") ? "text-emerald-700 bg-emerald-50 border-emerald-150" : "text-amber-700 bg-amber-50 border-amber-150"}`}>
                                   {p.statusSurveyLabour}
@@ -2188,122 +2434,171 @@ export default function App() {
                               ) : "-"}
                             </td>
                             
-                            <td className="py-3 px-5">{p.ceMaterial || "-"}</td>
-                            <td className="py-3 px-5 max-w-[150px] truncate" title={p.sphBoqVendor}>{p.sphBoqVendor || "-"}</td>
-                            <td className="py-3 px-5">{p.apdLn || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.timeline || "-"}</td>
-                            <td className="py-3 px-5">{p.statusCe || "-"}</td>
-                            <td className="py-3 px-5">{p.statusMr || "-"}</td>
-                            <td className="py-3 px-5">{p.clover || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.noMr || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.noGin || "-"}</td>
-                            <td className="py-3 px-5">{p.statusMaterial || "-"}</td>
-                            <td className="py-3 px-5 max-w-[150px] truncate" title={p.remarks}>{p.remarks || "-"}</td>
-                            <td className="py-3 px-5">{p.stock || "-"}</td>
-                            <td className="py-3 px-5 font-mono font-bold text-slate-800">{p.projectId || "-"}</td>
-                            <td className="py-3 px-5 max-w-[150px] truncate" title={p.material}>{p.material || "-"}</td>
-                            <td className="py-3 px-5 font-mono">{p.quantity || "-"}</td>
-                            <td className="py-3 px-5 font-bold">{p.priority || "-"}</td>
-                            <td className="py-3 px-5">{p.adjusment || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.ceMaterial || "-"}</td>
+                            <td className="py-3 px-5 max-w-[150px] truncate border-r border-slate-100 bg-orange-50/10" title={p.sphBoqVendor}>{p.sphBoqVendor || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.apdLn || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100 bg-orange-50/10">{p.timeline || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.statusCe || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.statusMr || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.clover || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100 bg-orange-50/10">{p.noMr || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100 bg-orange-50/10">{p.noGin || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-orange-50/10">{p.statusMaterial || "-"}</td>
+                            <td className="py-3 px-5 max-w-[150px] truncate border-r border-slate-200 bg-orange-50/10" title={p.remarks}>{p.remarks || "-"}</td>
+                            
+                            <td className="py-3 px-5 border-r border-slate-100 bg-rose-50/10">{p.stock || "-"}</td>
+                            <td className="py-3 px-5 font-mono font-bold text-slate-800 border-r border-slate-100 bg-rose-50/10">{p.projectId || "-"}</td>
+                            <td className="py-3 px-5 max-w-[150px] truncate border-r border-slate-100 bg-rose-50/10" title={p.material}>{p.material || "-"}</td>
+                            <td className="py-3 px-5 font-mono border-r border-slate-100 bg-rose-50/10">{p.quantity || "-"}</td>
+                            <td className="py-3 px-5 font-bold border-r border-slate-100 bg-rose-50/10">{p.priority || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-200 bg-rose-50/10">{p.adjusment || "-"}</td>
                             
                             {/* FO cables specification */}
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo288 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo288gl || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo144 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo96 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo96gl || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo48 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo24 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.fo12 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.coax || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.galvanis2 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo288 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo288gl || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo144 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo96 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo96gl || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo48 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo24 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.fo12 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100 bg-sky-50/10">{p.coax || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-200 bg-sky-50/10">{p.galvanis2 || "-"}</td>
                             
                             {/* Closures */}
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure288 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure144 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure96 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure48 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure24 || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-slate-600">{p.closure12 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100">{p.closure288 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100">{p.closure144 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100">{p.closure96 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100">{p.closure48 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-100">{p.closure24 || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-slate-600 border-r border-slate-200">{p.closure12 || "-"}</td>
                             
                             {/* Civil and field stats */}
-                            <td className="py-3 px-5 font-mono text-slate-600">{p.tglStartProject || "-"}</td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 font-mono text-slate-600 border-r border-slate-100 bg-emerald-50/5">{p.tglStartProject || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">
                               {p.statusPermit ? (
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${p.statusPermit.toLowerCase().includes("approved") || p.statusPermit.toLowerCase().includes("ijin") || p.statusPermit.toLowerCase().includes("ok") ? "text-emerald-700 bg-emerald-50 border-emerald-150" : "text-amber-700 bg-amber-50 border-amber-150"}`}>
                                   {p.statusPermit}
                                 </span>
                               ) : "-"}
                             </td>
-                            <td className="py-3 px-5">{p.galianAlurCons || "-"}</td>
-                            <td className="py-3 px-5">{p.galianAksesCons || "-"}</td>
-                            <td className="py-3 px-5">{p.galianCrossingJalanCons || "-"}</td>
-                            <td className="py-3 px-5">{p.galianCrossingJembatanCons || "-"}</td>
-                            <td className="py-3 px-5">{p.galianCrossingSungaiCons || "-"}</td>
-                            <td className="py-3 px-5">{p.instalasiHhMhCons || "-"}</td>
-                            <td className="py-3 px-5">{p.installGalvanisCons || "-"}</td>
-                            <td className="py-3 px-5">{p.installPoleCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.galianAlurCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.galianAksesCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.galianCrossingJalanCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.galianCrossingJembatanCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.galianCrossingSungaiCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.instalasiHhMhCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-emerald-50/5">{p.installGalvanisCons || "-"}</td>
+                            <td className="py-3 px-5 border-r border-slate-200 bg-emerald-50/5">{p.installPoleCons || "-"}</td>
                             
                             {/* FO Installed Cons */}
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo288Cons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo144Cons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo96Cons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo96glCons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo48Cons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.fo12Cons || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-emerald-50/20">{p.coaxCons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo288Cons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo144Cons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo96Cons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo96glCons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo48Cons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-100">{p.fo12Cons || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-emerald-700 bg-teal-50/10 border-r border-slate-200">{p.coaxCons || "-"}</td>
                             
                             {/* FO Pulling */}
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo288Pull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo144Pull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo96Pull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo96glPull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo48Pull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.fo12Pull || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-indigo-50/20">{p.coaxPull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo288Pull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo144Pull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo96Pull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo96glPull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo48Pull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-100">{p.fo12Pull || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-indigo-700 bg-violet-50/10 border-r border-slate-200">{p.coaxPull || "-"}</td>
                             
-                            {/* Construction stats */}
-                            <td className="py-3 px-5">
-                              <span className={`px-2.5 py-1 text-[10px] font-extrabold rounded-full ${statusBadge}`}>
-                                {p.statusConstruction || "-"}
-                              </span>
+                            {/* Interactive status column */}
+                            <td className="py-3 px-5 border-r border-slate-100 bg-slate-800 text-slate-100" onClick={(e) => e.stopPropagation()}>
+                              <select
+                                value={p.statusConstruction || ""}
+                                onChange={(e) => {
+                                  const newVal = e.target.value;
+                                  const updated = projects.map(proj => {
+                                    if (proj.no === p.no) {
+                                      return {
+                                        ...proj,
+                                        statusConstruction: newVal,
+                                        progressConstruction: newVal === "Project Done" ? 100 : proj.progressConstruction === 100 ? 90 : proj.progressConstruction,
+                                        dateUpdate: new Date().toISOString().split("T")[0]
+                                      };
+                                    }
+                                    return proj;
+                                  });
+                                  saveProjects(updated, `Status project "${p.namaProject}" diubah menjadi "${newVal}"`);
+                                }}
+                                className={`px-2 py-1 text-[11px] font-black rounded-lg border outline-none cursor-pointer transition-all ${statusBadge}`}
+                              >
+                                <option value="Not Started" className="bg-white text-slate-800 font-bold">Not Started</option>
+                                <option value="In Progress" className="bg-white text-blue-800 font-bold">In Progress</option>
+                                <option value="Pending" className="bg-white text-amber-800 font-bold">Pending</option>
+                                <option value="Hold" className="bg-white text-amber-800 font-bold">Hold</option>
+                                <option value="Project Done" className="bg-white text-emerald-800 font-bold">Project Done</option>
+                                <option value="Cancel" className="bg-white text-rose-800 font-bold">Cancel</option>
+                              </select>
                             </td>
-                            <td className="py-3 px-5 text-slate-600">{p.categoryConstruction || "-"}</td>
-                            <td className="py-3 px-5 font-mono font-bold text-indigo-600">{p.progressConstruction || 0}%</td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 text-slate-600 border-r border-slate-100 bg-slate-850 text-slate-200">{p.categoryConstruction || "-"}</td>
+                            
+                            {/* Interactive progress columns */}
+                            <td className="py-3 px-5 font-mono font-bold text-indigo-600 border-r border-slate-100 bg-slate-850" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={p.progressConstruction || 0}
+                                onChange={(e) => {
+                                  const newVal = Math.min(100, Math.max(0, Number(e.target.value) || 0));
+                                  const updated = projects.map(proj => {
+                                    if (proj.no === p.no) {
+                                      return {
+                                        ...proj,
+                                        progressConstruction: newVal,
+                                        statusConstruction: newVal === 100 ? "Project Done" : proj.statusConstruction === "Project Done" ? "In Progress" : proj.statusConstruction,
+                                        dateUpdate: new Date().toISOString().split("T")[0]
+                                      };
+                                    }
+                                    return proj;
+                                  });
+                                  saveProjects(updated, `Progress project "${p.namaProject}" diubah menjadi ${newVal}%`);
+                                }}
+                                className="w-14 px-1.5 py-1 text-xs font-bold font-mono text-slate-800 bg-slate-50 border border-slate-200 rounded-lg text-center focus:ring-1 focus:ring-indigo-500 focus:bg-white outline-none"
+                              />
+                            </td>
+                            <td className="py-3 px-5 border-r border-slate-100 bg-slate-850" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center gap-2">
                                 <div className="w-12 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                  <div className="bg-indigo-600 h-full rounded-full" style={{ width: `${p.progressConstruction || 0}%` }} />
+                                  <div className="bg-indigo-600 h-full rounded-full transition-all duration-300" style={{ width: `${p.progressConstruction || 0}%` }} />
                                 </div>
-                                <span className="text-[11px] font-bold font-mono text-slate-600">{p.progressConstruction || 0}%</span>
+                                <span className="text-[11px] font-bold font-mono text-slate-100">{p.progressConstruction || 0}%</span>
                               </div>
                             </td>
                             
-                            <td className="py-3 px-5 font-mono text-slate-600">{p.tglDateline || "-"}</td>
-                            <td className="py-3 px-5 font-bold text-indigo-600">{p.planCoBulan || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-slate-600">{p.today || "-"}</td>
-                            <td className="py-3 px-5 font-mono font-extrabold text-rose-600">{p.aging || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-slate-300 border-r border-slate-100 bg-slate-850">{p.tglDateline || "-"}</td>
+                            <td className="py-3 px-5 font-bold text-indigo-400 border-r border-slate-100 bg-slate-850">{p.planCoBulan || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-slate-300 border-r border-slate-100 bg-slate-850">{p.today || "-"}</td>
+                            <td className="py-3 px-5 font-mono font-extrabold text-rose-400 border-r border-slate-700 bg-slate-850">{p.aging || "-"}</td>
                             
                             {/* RCO stats */}
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo288Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo144Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo96Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo96glRco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo48Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo24Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.fo12Rco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-amber-50/10">{p.coaxRco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo288Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo144Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo96Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo96glRco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo48Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo24Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-100">{p.fo12Rco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-amber-700 bg-yellow-50/10 border-r border-slate-200">{p.coaxRco || "-"}</td>
                             
                             {/* SCO stats */}
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo288Sco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo144Sco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo96Sco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo96glSco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo48Sco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.fo12Sco || "-"}</td>
-                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10">{p.coaxSco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo288Sco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo144Sco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo96Sco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo96glSco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo48Sco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-100">{p.fo12Sco || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-center text-purple-700 bg-purple-50/10 border-r border-slate-200">{p.coaxSco || "-"}</td>
                             
-                            <td className="py-3 px-5 font-mono text-slate-600">{p.statusCoFo || "-"}</td>
+                            <td className="py-3 px-5 font-mono text-slate-600 border-r border-slate-100">{p.statusCoFo || "-"}</td>
                             <td className="py-3 px-5 font-mono text-slate-600">{p.statusCoCoax || "-"}</td>
                           </tr>
                         );
@@ -2312,7 +2607,7 @@ export default function App() {
 
                     {filteredProjects.length === 0 && (
                       <tr>
-                        <td colSpan={tableViewMode === "compact" ? 8 : 96} className="py-12 text-center text-slate-400 font-medium">
+                        <td colSpan={tableViewMode === "compact" ? 9 : 97} className="py-12 text-center text-slate-400 font-medium">
                           <AlertCircle className="w-8 h-8 mx-auto text-slate-300 mb-2" />
                           Tidak ada project yang cocok dengan kriteria pencarian Anda.
                         </td>
@@ -2364,196 +2659,11 @@ export default function App() {
 
         {/* TAB 2: ADVANCED ANALYTICS & STATISTIK */}
         {activeTab === "analytics" && (
-          <div className="flex flex-col gap-8 transition-all duration-300" id="analytics-tab">
-            {/* Overview Scorecard */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata Progres Konstruksi</span>
-                <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-black text-indigo-600">{analytics.averageProgress}%</h3>
-                  <span className="text-xs text-slate-500 font-medium">Dari seluruh project aktif</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-2.5 mt-2 overflow-hidden">
-                  <div className="bg-indigo-600 h-full rounded-full" style={{ width: `${analytics.averageProgress}%` }}></div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Metode Project Terbanyak</span>
-                <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-black text-slate-900">
-                    {(() => {
-                      const counts = projects.reduce((acc, p) => {
-                        const m = p.metodeProject || "TRENCHING";
-                        acc[m] = (acc[m] || 0) + 1;
-                        return acc;
-                      }, {} as Record<string, number>);
-                      const sorted = (Object.entries(counts) as [string, number][]).sort((a, b) => b[1] - a[1]);
-                      return sorted[0] ? sorted[0][0] : "-";
-                    })()}
-                  </h3>
-                  <span className="text-xs text-slate-500 font-medium">Metode dominan</span>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Disesuaikan dengan kondisi lapangan geografis</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kebutuhan APD Relokasi</span>
-                <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-black text-emerald-600">
-                    {projects.filter(p => p.apdRelokasi === "Need").length} Unit
-                  </h3>
-                  <span className="text-xs text-slate-500 font-medium">Butuh Pengamanan</span>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">
-                  {projects.filter(p => p.apdRelokasi === "No Need").length} project tidak memerlukan APD
-                </p>
-              </div>
-            </div>
-
-            {/* Detailed Distribution Analysis Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
-              {/* Construction Methods Breakdown */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">Metode Konstruksi & Relokasi</h3>
-                  <p className="text-[11px] text-slate-400">Distribusi teknik penarikan kabel fiber optik</p>
-                </div>
-                <div className="space-y-4 py-2">
-                  {(() => {
-                    const counts = projects.reduce((acc, p) => {
-                      const m = p.metodeProject || "TRENCHING";
-                      acc[m] = (acc[m] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>);
-                    const maxVal = Math.max(...(Object.values(counts) as number[]), 1);
-                    return (Object.entries(counts) as [string, number][]).map(([name, count]) => {
-                      const pct = Math.round((count / projects.length) * 100);
-                      return (
-                        <div key={name} className="space-y-1.5">
-                          <div className="flex justify-between items-center text-xs">
-                            <span className="font-bold text-slate-700">{name}</span>
-                            <span className="font-semibold text-slate-500">{count} Project ({pct}%)</span>
-                          </div>
-                          <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                            <div 
-                              className="bg-indigo-500 h-full rounded-full transition-all duration-700" 
-                              style={{ width: `${(count / maxVal) * 100}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    });
-                  })()}
-                </div>
-              </div>
-
-              {/* Survey Readiness & Audit Status */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-5">
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">Status Audit & Survey Readiness</h3>
-                  <p className="text-[11px] text-slate-400">Analisis kesiapan teknis sebelum konstruksi dimulai</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Status Audit Grid */}
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
-                    <span className="text-xs font-bold text-slate-500 block">Status Audit Finansial</span>
-                    <div className="space-y-2">
-                      {["Sudah Audit", "Belum Audit", "Proses Audit"].map(status => {
-                        const count = projects.filter(p => p.statusAudit === status).length;
-                        return (
-                          <div key={status} className="flex justify-between items-center text-xs">
-                            <span className="text-slate-600 font-medium">{status}</span>
-                            <span className="font-black text-slate-800 bg-white px-2 py-0.5 rounded-md border border-slate-200">{count}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Survey Material Checklist */}
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
-                    <span className="text-xs font-bold text-slate-500 block">Kesiapan Survey Material</span>
-                    <div className="space-y-2">
-                      {["Sudah Survey", "Belum Survey", "No Need"].map(survey => {
-                        const count = projects.filter(p => p.statusSurveyMaterial === survey).length;
-                        return (
-                          <div key={survey} className="flex justify-between items-center text-xs">
-                            <span className="text-slate-600 font-medium">{survey}</span>
-                            <span className="font-black text-slate-800 bg-white px-2 py-0.5 rounded-md border border-slate-200">{count}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Construction Category summary */}
-                <div className="pt-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Skala Kompleksitas</span>
-                  <div className="flex gap-4">
-                    {["Minor", "Major", "Critical"].map(cat => {
-                      const count = projects.filter(p => p.categoryConstruction === cat).length;
-                      return (
-                        <div key={cat} className="flex-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 text-center">
-                          <p className="text-xs font-bold text-slate-500">{cat}</p>
-                          <h4 className="text-lg font-black text-slate-900 mt-0.5">{count}</h4>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* PIC Workload & PO Status Monitoring */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col gap-5">
-              <div>
-                <h3 className="font-bold text-slate-900 text-base">Beban Kerja PIC Project & Pengajuan PO</h3>
-                <p className="text-[11px] text-slate-400">Detail volume pekerjaan terdistribusi per personil</p>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                      <th className="py-3 px-4">Nama PIC</th>
-                      <th className="py-3 px-4">Jumlah Project</th>
-                      <th className="py-3 px-4">Total Panjang Kabel</th>
-                      <th className="py-3 px-4">PO Diajukan</th>
-                      <th className="py-3 px-4">PO Selesai / Terbit</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                    {(() => {
-                      const picStats = projects.reduce((acc, p) => {
-                        const pic = p.pic || "Tanpa PIC";
-                        if (!acc[pic]) {
-                          acc[pic] = { count: 0, totalLength: 0, poRequested: 0, poDone: 0 };
-                        }
-                        acc[pic].count += 1;
-                        acc[pic].totalLength += p.lengthM || 0;
-                        if (p.statusPengajuanPo === "Sudah Diajukan") acc[pic].poRequested += 1;
-                        if (p.statusPengajuanPo === "Selesai PO") acc[pic].poDone += 1;
-                        return acc;
-                      }, {} as Record<string, { count: number, totalLength: number, poRequested: number, poDone: number }>);
-
-                      return (Object.entries(picStats) as [string, { count: number, totalLength: number, poRequested: number, poDone: number }][]).map(([pic, stats]) => (
-                        <tr key={pic} className="hover:bg-slate-50/50">
-                          <td className="py-3 px-4 font-bold text-slate-900">{pic}</td>
-                          <td className="py-3 px-4">{stats.count} Project</td>
-                          <td className="py-3 px-4 font-mono">{stats.totalLength.toLocaleString("id-ID")} m</td>
-                          <td className="py-3 px-4 text-amber-600">{stats.poRequested} Project</td>
-                          <td className="py-3 px-4 text-emerald-600">{stats.poDone} Project</td>
-                        </tr>
-                      ));
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div className="transition-all duration-300 animate-fade-in" id="analytics-tab">
+            <AnalyticsDashboard 
+              filteredProjects={filteredProjects} 
+              allProjects={projects} 
+            />
           </div>
         )}
 
